@@ -1,0 +1,95 @@
+
+;; Added by Package.el.  This must come before configurations of
+;; installed packages.  Don't delete this line.  If you don't want it,
+;; just comment it out by adding a semicolon to the start of the line.
+;; You may delete these explanatory comments.
+(package-initialize)
+;;(global-set-key [end] "\C-e")
+;;(global-set-key [home]"\C-u" ) 
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(ansi-color-faces-vector
+   [default default default italic underline success warning error])
+ '(ansi-color-names-vector
+   ["#2e3436" "#a40000" "#4e9a06" "#c4a000" "#204a87" "#5c3566" "#729fcf" "#eeeeec"])
+ '(custom-enabled-themes (quote (avk-daylight)))
+ '(custom-safe-themes
+   (quote
+    ("e3d194a55a73cb87b602d902bb21210f3970d4c07303276c073f4bdb73ba2a3b" "e5c6caa4860b1ba51dc5ad335c0c2734ea650a6098dd9652a1ab3d9aa702e185" "29af7993f426d7871a605776a48e38ecc22bc80dd9bff0bc65303dfe5798ac64" default)))
+ '(package-selected-packages
+   (quote
+    (exec-path-from-shell auto-virtualenv pyvirtualenv virtualenv jedi ein ob-ipython ipython znc elpy anaconda-mode ac-python highlight crosshairs ssh-config-mode ssh company-php ac-php))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(cursor ((t (:background "black" :strike-through t :underline nil :weight light :height 1 :width condensed)))))
+(add-to-list 'package-archives
+             '("marmalade" . "http://marmalade-repo.org/packages/") t)
+
+
+
+(let ((default-directory  "~/.emacs.d/mylibs/"))
+  (normal-top-level-add-subdirs-to-load-path))
+
+
+(eval-after-load 'php-mode
+  '(require 'php-ext))
+
+
+(when (>= emacs-major-version 24)
+  (require 'package)
+  (add-to-list
+   'package-archives
+   '("melpa" . "http://melpa.org/packages/")
+   t)
+  (package-initialize))
+
+
+(require 'cl)
+  (require 'php-mode)
+  (add-hook 'php-mode-hook
+            '(lambda ()
+               (auto-complete-mode t)
+               (require 'ac-php)
+               (setq ac-sources  '(ac-source-php ) )
+               (yas-global-mode 1)
+               (define-key php-mode-map  (kbd "C-]") 'ac-php-find-symbol-at-point)   ;goto define
+               (define-key php-mode-map  (kbd "C-t") 'ac-php-location-stack-back   ) ;go back
+	       )
+	    )
+
+
+(add-hook 'php-mode-hook
+            '(lambda ()
+               (auto-complete-mode t)
+               (require 'ac-php)
+               (setq ac-sources  '(ac-source-php ) )
+               (yas-global-mode 1)
+               (define-key php-mode-map  (kbd "C-]") 'ac-php-find-symbol-at-point)   ;goto define
+               (define-key php-mode-map  (kbd "C-t") 'ac-php-location-stack-back   ) ;go back
+               ))
+
+
+
+(add-hook 'php-mode-hook
+          '(lambda ()
+             (require 'company-php)
+             (company-mode t)
+             (add-to-list 'company-backends 'company-ac-php-backend )))
+
+(setq-default cursor-type 'bar) 
+(desktop-save-mode 1)
+
+(defun sudo-edit (&optional arg)
+  (interactive "P")
+  (if (or arg (not buffer-file-name))
+      (find-file (concat "/sudo:root@localhost:"
+                         (ido-read-file-name "Find file(as root): ")))
+    (find-alternate-file (concat "/sudo:root@localhost:" buffer-file-name))))
+
+(add-hook 'python-mode-hook 'jedi:ac-setup)
