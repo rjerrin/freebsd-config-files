@@ -1,0 +1,9 @@
+- hosts: localhost
+
+  tasks:
+     - name: run ntpclient
+       command: ntpdate 3.asia.pool.ntp.org
+
+
+
+       
